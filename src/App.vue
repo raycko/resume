@@ -1,6 +1,15 @@
 <template>
     <div id="app">
-        <div id="page"></div>
+        <div id="overlay" style="display: none">
+            <h1>We don't support mobile yet!</h1>
+            <h2>LETS GET IN TOUCH!</h2>
+            <br/>
+            <p>Raycko van Hummel<br/>
+                +31 (0)6 48 78 57 22 <br/>
+                <a href="mailto:rayckovanhummel@gmail.com">rayckovanhummel@gmail.com</a>
+            </p>
+        </div>
+        <div id="page" style="height: 15000px;"></div>
         <div id="resume">
             <div class="story">
                 <div class="group-1">
@@ -42,12 +51,10 @@
                                 <td>Low</td>
                                 <td>Medium</td>
                                 <td>Advanced</td>
-                                <td>Intermediate</td>
                                 <td>Native</td>
                             </tr>
                             <tr>
                                 <td>Dutch</td>
-                                <td><img src="./assets/img/flag-nl.png"></td>
                                 <td><img src="./assets/img/flag-nl.png"></td>
                                 <td><img src="./assets/img/flag-nl.png"></td>
                                 <td><img src="./assets/img/flag-nl.png"></td>
@@ -58,14 +65,12 @@
                                 <td><img src="./assets/img/flag-en.png"></td>
                                 <td><img src="./assets/img/flag-en.png"></td>
                                 <td><img src="./assets/img/flag-en.png"></td>
-                                <td><img src="./assets/img/flag-en.png"></td>
                                 <td></td>
                             </tr>
                             <tr>
                                 <td>German</td>
                                 <td><img src="./assets/img/flag-gr.png"></td>
                                 <td><img src="./assets/img/flag-gr.png"></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                             </tr>
@@ -126,7 +131,7 @@
                 </div>
                 <div class="group-5">
                     <div class="start animated" id="education" style="left: 360%; bottom: 280px;">
-                        <h2>EDCUATION</h2>
+                        <h2>EDUCATION</h2>
                         <table align="center">
                             <thead>
                             <tr>
@@ -160,7 +165,7 @@
                 </div>
                 <div class="group-6">
                     <div class="start animated" id="qualities" style="left: 450%; bottom: 250px;">
-                        <h2>QUALITIES: PROGRAM LANGUAGES</h2>
+                        <h2>QUALIFICATIONS: PROGRAM LANGUAGES</h2>
                         <table class="qualities" align="center">
                             <tr>
                                 <td></td>
@@ -214,7 +219,7 @@
                 </div>
                 <div class="group-7">
                     <div class="start animated" id="qualities2" style="left: 530%; bottom: 280px;">
-                        <h2><img src="./assets/img/blue-inguin.png"> QUALITIES: OTHER</h2>
+                        <h2><img src="./assets/img/blue-inguin.png"> QUALIFICATIONS: OTHER</h2>
                         <table class="qualities" align="center">
                             <tr>
                                 <td colspan="2"><b>Web Control Panels</b></td>
@@ -273,7 +278,7 @@
                 </div>
                 <div class="group-8">
                     <div class="start animated" id="qualities3" style="left: 630%; bottom: 280px;">
-                        <h2><img src="./assets/img/blue-inguin.png"> QUALITIES: OTHER 2</h2>
+                        <h2><img src="./assets/img/blue-inguin.png"> QUALIFICATIONS: OTHER 2</h2>
                         <table class="qualities" align="center">
                             <tr>
                                 <td colspan="2"><b>Other Languagues</b></td>
@@ -357,7 +362,7 @@
                     </div>
                     <div class="start animated" id="contact2" style="left: 765%; bottom: 120px;">
                         <p>This resume is made with VueJS and some passion<br/><br/>
-                        <a href="https://github.com/raycko/resume">Want to see the magic?</a></p>
+                            <a href="https://github.com/raycko/resume">Want to see the magic?</a></p>
                     </div>
                 </div>
             </div>
@@ -381,6 +386,7 @@ export default {
         return {
             containerId: 'resume',
             scrolled: 0,
+            scaleFactorImg: 1,
             scaleFactor: 1,
             width: 0,
             group1: {
@@ -624,23 +630,68 @@ export default {
             return false;
         },
         applyScaleFactor(elementName) {
-            const element = document.getElementById(elementName);
-            element.style.bottom *= this.scaleFactor;
+            const style = document.createElement('STYLE');
+            const elements = document.getElementsByClassName(elementName);
+            for (let x = 0; x < elements.length; x += 1) {
+                const t = document.createTextNode(`#${elements[x].id}{width: ${elements[x].clientWidth * this.scaleFactorImg}px; height: ${elements[x].clientHeight * this.scaleFactorImg}px;}`);
+                style.appendChild(t);
+            }
+            document.head.appendChild(style);
         },
+        applyScaleFactorGlobal() {
+            const style = document.createElement('STYLE');
+            const t = document.createTextNode(`#resume .story .languages img{ height: ${100 * this.scaleFactorImg}px }
+            #resume .story .languages{ font-size: ${28 * this.scaleFactor}px }
+             #resume .story .languages td{ width: ${175 * this.scaleFactor}px }
+             #resume .story #experience thead, #resume .story #education thead{font-size: ${28 * this.scaleFactor}px}
+             #resume .story #experience, #resume .story #education{ font-size: ${20 * this.scaleFactor}px }
+             #resume .story .start h2{ font-size: ${50 * this.scaleFactor}px }`);
+            style.appendChild(t);
+            document.head.appendChild(style);
+        },
+        handleResize() {
+            const page = document.getElementById('page');
+            const overlay = document.getElementById('overlay');
+            if (window.innerWidth < 1500 && window.innerWidth > 1000) {
+                this.scaleFactorImg = 0.6;
+                this.scaleFactor = 0.8;
+                page.style.height = `${window.innerWidth * 8.5}px`;
+                overlay.style.display = 'none';
+            }
+            if (window.innerWidth <= 1000 && window.innerWidth >= 768) {
+                this.scaleFactorImg = 0.4;
+                this.scaleFactor = 0.6;
+                page.style.height = `${window.innerWidth * 8.5}px`;
+                overlay.style.display = 'none';
+            }
+            if (window.innerWidth < 768) {
+                overlay.style.display = 'block';
+            }
+        }
+    },
+    mounted() {
+        this.handleResize();
+        this.applyScaleFactor('mountain-1');
+        this.applyScaleFactor('cloud-1');
+        this.applyScaleFactor('cloud-2');
+        this.applyScaleFactor('balloon-1');
+        this.applyScaleFactor('tree-1');
+        this.applyScaleFactor('tree-2');
+        this.applyScaleFactorGlobal();
     },
     beforeMount() {
         window.addEventListener('scroll', this.handleScroll);
+        window.addEventListener('resize', this.handleResize);
         this.width = window.innerWidth;
     },
     beforeDestroy() {
         window.removeEventListener('scroll', this.handleScroll);
+        window.removeEventListener('resize', this.handleResize);
     },
 };
 </script>
 
 <style lang="scss">
-    $scale-factor: 1;
-
     @font-face {
         font-family: 'IceLetter';
         src: url('assets/font/snowtt.ttf');
@@ -655,21 +706,83 @@ export default {
         left: 0;
         top: 0;
         width: 100%;
-        height: 15000px;
     }
 
-    p {
-        font-size: 22px * $scale-factor;
+    #overlay {
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background: white;
+        color: black;
+        position: fixed;
+        z-index: 99999;
+        a{
+            color: black;
+        }
     }
+
     a {
         color: #ffff;
     }
+
     a:hover {
         text-decoration: none;
     }
 
     h3 {
         font-size: 30px;
+    }
+
+    .mountain-1 {
+        z-index: -1;
+        position: absolute;
+        background: url('assets/img/mountain1.png');
+        background-size: cover;
+        width: 515px;
+        height: 278px;
+    }
+
+    .tree-1 {
+        position: absolute;
+        background: url('assets/img/tree-1.png');
+        background-size: cover;
+        width: 205px;
+        height: 266px;
+    }
+
+    .tree-2 {
+        position: absolute;
+        background: url('assets/img/tree-2.png');
+        background-size: cover;
+        width: 168px;
+        height: 268px;
+    }
+
+    .balloon-1 {
+        position: absolute;
+        background: url('assets/img/balloon.png');
+        background-size: cover;
+        width: 120px;
+        height: 180px;
+    }
+
+    .cloud-1 {
+        z-index: -2;
+        position: absolute;
+        background: url('assets/img/cloud1.png');
+        background-size: cover;
+        width: 334px;
+        height: 100px;
+    }
+
+    .cloud-2 {
+        z-index: -2;
+        position: absolute;
+        background: url('assets/img/cloud2.png');
+        background-size: cover;
+        width: 160px;
+        height: 48px;
     }
 
     #resume {
@@ -710,50 +823,6 @@ export default {
         .story {
             height: 100%;
             width: 100%;
-            .mountain-1 {
-                position: absolute;
-                background: url('assets/img/mountain1.png');
-                background-size: cover;
-                width: 515px *$scale-factor;
-                height: 278px *$scale-factor;
-            }
-            .tree-1 {
-                position: absolute;
-                background: url('assets/img/tree-1.png');
-                background-size: cover;
-                width: 205px *$scale-factor;
-                height: 266px *$scale-factor;
-            }
-            .tree-2 {
-                position: absolute;
-                background: url('assets/img/tree-2.png');
-                background-size: cover;
-                width: 168px *$scale-factor;
-                height: 268px *$scale-factor;
-            }
-            .balloon-1 {
-                position: absolute;
-                background: url('assets/img/balloon.png');
-                background-size: cover;
-                width: 120px *$scale-factor;
-                height: 180px *$scale-factor;
-            }
-            .cloud-1 {
-                z-index: -1;
-                position: absolute;
-                background: url('assets/img/cloud1.png');
-                background-size: cover;
-                width: 334px *$scale-factor;
-                height: 100px *$scale-factor;
-            }
-            .cloud-2 {
-                z-index: -1;
-                position: absolute;
-                background: url('assets/img/cloud2.png');
-                background-size: cover;
-                width: 160px *$scale-factor;
-                height: 48px *$scale-factor;
-            }
             h1, h2 {
                 margin: 0;
             }
@@ -766,41 +835,41 @@ export default {
                     position: absolute;
                     background: url('assets/img/raycko.png');
                     background-size: cover;
-                    height: 200px *$scale-factor;
-                    width: 200px *$scale-factor;
+                    height: 200px;
+                    width: 200px;
                 }
             }
             .languages {
-                font-size: 28px *$scale-factor;
+                font-size: 28px;
                 td {
-                    padding: 10px *$scale-factor;
-                    width: 175px *$scale-factor;
+                    padding: 10px;
+                    width: 175px;
                 }
                 img {
-                    height: 100px *$scale-factor;
+                    height: 100px;
                 }
             }
             .qualities {
-                font-size: 22px *$scale-factor;
+                font-size: 22px;
                 td {
-                    padding: 2px 10px *$scale-factor;
-                    width: 120px *$scale-factor;
+                    padding: 2px 10px;
+                    width: 120px;
                 }
                 img {
-                    height: 50px *$scale-factor;
+                    height: 50px;
                 }
             }
             #experience, #education {
                 thead {
-                    font-size: 24px *$scale-factor;
+                    font-size: 24px;
                     font-weight: bold;
                 }
                 tbody {
                     td {
-                        padding: 10px *$scale-factor;
+                        padding: 10px;
                         span {
                             text-transform: uppercase;
-                            font-size: 14px *$scale-factor;
+                            font-size: 14px;
                             font-style: italic;
                         }
                     }
@@ -808,14 +877,14 @@ export default {
                         text-align: left;
                     }
                 }
-                font-size: 20px *$scale-factor;
+                font-size: 20px;
             }
             .start {
                 width: 100%;
                 text-align: center;
                 color: white;
                 position: absolute;
-                bottom: 450px *$scale-factor;
+                bottom: 450px;
                 opacity: 0;
                 h2 {
                     img {
@@ -837,6 +906,7 @@ export default {
                     font-size: 20px;
                     font-family: Calibri, sans-serif;
                     font-weight: bold;
+                    z-index: 5;
                     h1 {
                         margin-top: 15px;
                     }
@@ -875,17 +945,6 @@ export default {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
-        color: #2c3e50;
     }
 
-    #nav {
-        padding: 30px;
-        a {
-            font-weight: bold;
-            color: #2c3e50;
-            &.router-link-exact-active {
-                color: #42b983;
-            }
-        }
-    }
 </style>
